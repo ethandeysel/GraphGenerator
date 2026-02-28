@@ -1,0 +1,21 @@
+# Python environment
+venv/
+env/
+.env
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Data file
+*.xlsx
+*.xls
+*.csv
+output/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Streamlit
+.streamlit/
