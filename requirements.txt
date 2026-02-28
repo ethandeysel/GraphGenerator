@@ -3,4 +3,5 @@ altair>=5.0.0
 pandas>=2.0.0
 matplotlib
 plotly
+openpyxl
 numpy
