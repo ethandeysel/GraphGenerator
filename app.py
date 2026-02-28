@@ -45,13 +45,13 @@ if uploaded_file:
                 # Generate Pillar Chart
                 fig_p = get_pillar_chart(row, averages_df)
                 buf_p = io.BytesIO()
-                fig_p.savefig(buf_p, format="png")
+                fig_p.savefig(buf_p, format="png", bbox_inches='tight', dpi=300)
                 zip_file.writestr(f"Pillars_{supplier_name}.png", buf_p.getvalue())
                 
                 # Generate Risk Bar
                 fig_r = get_risk_bar(row, averages_df['Risk Rating '].iloc[0])
                 buf_r = io.BytesIO()
-                fig_r.savefig(buf_r, format="png")
+                fig_r.savefig(buf_r, format="png", bbox_inches='tight', dpi=300)
                 zip_file.writestr(f"Risk_{supplier_name}.png", buf_r.getvalue())
                 
                 # Close figures to save memory

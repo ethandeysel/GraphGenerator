@@ -25,7 +25,7 @@ def get_pillar_chart(row_data, averages):
     plt.legend(handles=[avg_patch] + bar_legend, loc='center left', fontsize=15, bbox_to_anchor=(1.02, 0.5))
     ax.set_xticks(range(7))
     ax.set_xticklabels(['A', 'B', 'C', 'D', 'E', 'F', 'G'])
-    
+    fig.tight_layout()
     return fig
 
 def get_risk_bar(row_data, avg_risk):
@@ -54,5 +54,5 @@ def get_risk_bar(row_data, avg_risk):
     ax.axvline(avg_risk, color='red', linewidth=2, label='Avg')
     ax.set_xlim(0, 5)
     ax.set_title(f"Risk Rating: {row_data['SUPPLIER']}")
-    
+    fig.tight_layout()
     return fig
