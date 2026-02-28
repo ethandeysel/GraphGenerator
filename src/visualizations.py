@@ -13,6 +13,7 @@ def get_pillar_chart(row_data, averages):
     bar_colours[-1] = "#F29CFF"
 
     fig, ax = plt.subplots(figsize=(12, 7))
+    bars = ax.bar(cols, row_val, color=bar_colours)
     
     for i, col in enumerate(cols):
         ax.hlines(avgs[col], i - 0.4, i + 0.4, colors='red', linewidth=2)
