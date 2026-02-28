@@ -23,13 +23,13 @@ if uploaded_file:
     row_data = data_avg[data_avg['SUPPLIER'] == selected_supplier].iloc[0]
     
     # 4. Display Graphs
-    col1, col2 = st.columns([2, 1])
+    tab1, tab2 = st.tabs(["Pillar Analysis", "Risk Rating"])
     
-    with col1:
+    with tab1:
         fig_pillars = get_pillar_chart(row_data, averages_df)
         st.pyplot(fig_pillars)
         
-    with col2:
+    with tab2:
         fig_risk = get_risk_bar(row_data, averages_df['Risk Rating '].iloc[0])
         st.pyplot(fig_risk)
         st.metric("Risk Score", f"{row_data['Risk Rating ']:.2f}")
