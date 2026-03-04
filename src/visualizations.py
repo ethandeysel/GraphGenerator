@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import numpy as np
 import io
+import pandas as pd
 
 def get_pillar_chart(row_data, averages):
     cols = list(averages.columns)[1:] # Remove risk rating
@@ -56,3 +57,50 @@ def get_risk_bar(row_data, avg_risk):
     ax.set_title(f"Risk Rating: {row_data['SUPPLIER']}")
     fig.tight_layout()
     return fig
+
+def get_pillar_dist(data):
+    bins = [0, 20, 40, 60, 80, 100]
+    bin_labels = [
+        '1 - Not in Place',
+        '2 - Developing Risk Informed',
+        '3 - Defined, Not Optimised',
+        '4 - Managed',
+        '5 - In Place'
+    ]
+
+    cols_to_plot = [
+        'A. Context of the Organisation', 'B. Governance & Accountability',
+        'C. Cybersecurity Strategy and Framework', 'D. Protection and Prevention',
+        'E. Monitoring and Detection', 'F. Incident Response and Recovery',
+        'G. Independent Reviews'
+    ]
+
+    cmap = plt.get_cmap('tab20')
+    bar_colours = [cmap(i) for i in range(5)] + ["#D3D3D3"]
+    all_figs = []
+    for col in cols_to_plot:
+        fig, ax = plt.subplots(figsize=(10, 2))
+        raw_values = pd.to_numeric(data[col], errors='coerce')
+        total_count = len(raw_values)
+        counts = pd.cut(raw_values, bins=bins, labels=bin_labels, right=False).value_counts(sort=False)
+        
+        unknown_count = raw_values.isna().sum()
+        counts['Unknown'] = unknown_count
+        
+        dist_pct = np.round((counts / total_count) * 100, 0)
+        
+        bars = plt.bar(dist_pct.index, dist_pct.values, color=bar_colours, edgecolor='black', alpha=0.8)
+        
+        for bar in bars:
+            height = bar.get_height()
+            plt.text(bar.get_x() + bar.get_width()/2., height + 1,
+                    f'{height:.1f}%', ha='center', va='bottom', fontsize=10, fontweight='bold')
+
+        ax.set_title(f'Distribution: {col}', fontsize=14, fontweight='bold', pad=20)
+        ax.set_ylabel('Percentage of Total Suppliers (%)')
+        ax.tick_params(axis='x', rotation=45)
+        ax.set_ylim(0, 100)
+        fig.tight_layout()
+        all_figs.append(fig) 
+        
+    return all_figs

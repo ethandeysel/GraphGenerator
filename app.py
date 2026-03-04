@@ -1,6 +1,6 @@
 import streamlit as st
 from src.engine import process_risk_data
-from src.visualizations import get_pillar_chart, get_risk_bar
+from src.visualizations import get_pillar_chart, get_risk_bar, get_pillar_dist
 import zipfile
 import io
 import matplotlib.pyplot as plt
@@ -13,7 +13,7 @@ uploaded_file = st.file_uploader("Upload 'Analysis.xlsx'", type="xlsx")
 
 if uploaded_file:
     # 1. Run Engine
-    data_avg, averages_df, ids = process_risk_data(uploaded_file)
+    data_avg, averages_df, ids, data = process_risk_data(uploaded_file)
     
     # 2. Sidebar Selection
     supplier_list = data_avg['SUPPLIER'].tolist()
@@ -23,7 +23,7 @@ if uploaded_file:
     row_data = data_avg[data_avg['SUPPLIER'] == selected_supplier].iloc[0]
     
     # 4. Display Graphs
-    tab1, tab2 = st.tabs(["Pillar Analysis", "Risk Rating"])
+    tab1, tab2, tab3 = st.tabs(["Pillar Analysis", "Risk Rating", 'Pillar Distributions'])
     
     with tab1:
         fig_pillars = get_pillar_chart(row_data, averages_df)
@@ -34,6 +34,13 @@ if uploaded_file:
         st.pyplot(fig_risk)
         st.metric("Risk Score", f"{row_data['Risk Rating ']:.2f}")
 
+    with tab3:
+        st.header("Distribution Across All Suppliers")
+        dist_figs = get_pillar_dist(data) 
+        for fig in dist_figs:
+            st.pyplot(fig)
+            plt.close(fig) 
+            
     # 5. Download 
     if st.button("Prepare All Reports for Download"):
         zip_buffer = io.BytesIO()
@@ -54,9 +61,17 @@ if uploaded_file:
                 fig_r.savefig(buf_r, format="png", bbox_inches='tight', dpi=300)
                 zip_file.writestr(f"Risk_{supplier_name}.png", buf_r.getvalue())
                 
-                # Close figures to save memory
+                # Close figures 
                 plt.close(fig_p)
                 plt.close(fig_r)
+
+            # Generate Pillar distribution
+            dist_figs = get_pillar_dist(data) 
+            for fig_p in dist_figs:
+                buf_p = io.BytesIO()
+                fig_p.savefig(buf_p, format="png", bbox_inches='tight', dpi=300)
+                zip_file.writestr(f"Pillar_Distribution.png", buf_p.getvalue())
+                plt.close(fig)
 
         st.download_button(
             label="Download ZIP",

@@ -19,4 +19,4 @@ def process_risk_data(uploaded_file):
     averages_df = pd.DataFrame(col_averages).T
     averages_df = np.round(averages_df, 2)
     
-    return data_avg, averages_df, ids
+    return data_avg, averages_df, ids, data
